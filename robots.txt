@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /img/og/
+Disallow: /js/analytics-config.js
+
+# Allow Google AdSense crawler
+User-agent: Mediapartners-Google
+Allow: /
+
+Sitemap: https://convertlypro.com/sitemap.xml

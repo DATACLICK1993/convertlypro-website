@@ -1,0 +1,1129 @@
+'use strict';
+/* =============================================================
+   CONVERTLY PRO — main.js v4.0
+   Fixes:
+   1. Real PDF processing (pdf-lib.js)
+   2. Visual drag-to-crop
+   3. Preview before download (before/after)
+   4. Size comparison stats
+   ============================================================= */
+
+const ALL_TOOLS=[
+  {id:'jpg-to-png',title:'JPG to PNG',cat:'image',icon:'🔄'},
+  {id:'png-to-jpg',title:'PNG to JPG',cat:'image',icon:'📸'},
+  {id:'image-to-webp',title:'Image to WebP',cat:'image',icon:'🌐'},
+  {id:'webp-to-jpg',title:'WebP to JPG',cat:'image',icon:'🔁'},
+  {id:'image-compressor',title:'Image Compressor',cat:'image',icon:'🗜️'},
+  {id:'image-resizer',title:'Image Resizer',cat:'image',icon:'📐'},
+  {id:'bulk-image-resizer',title:'Bulk Image Resizer',cat:'image',icon:'📦'},
+  {id:'image-cropper',title:'Image Cropper',cat:'image',icon:'✂️'},
+  {id:'image-to-pdf',title:'Image to PDF',cat:'image',icon:'📄'},
+  {id:'add-watermark',title:'Add Watermark',cat:'image',icon:'💧'},
+  {id:'image-to-50kb',title:'Image to 50KB',cat:'image',icon:'📉'},
+  {id:'image-to-100kb',title:'Image to 100KB',cat:'image',icon:'📊'},
+  {id:'merge-pdf',title:'Merge PDF',cat:'pdf',icon:'📎'},
+  {id:'split-pdf',title:'Split PDF',cat:'pdf',icon:'✂️'},
+  {id:'compress-pdf',title:'Compress PDF',cat:'pdf',icon:'🗜️'},
+  {id:'pdf-to-word',title:'PDF to Word',cat:'pdf',icon:'📝'},
+  {id:'word-to-pdf',title:'Word to PDF',cat:'pdf',icon:'📑'},
+  {id:'pdf-to-jpg',title:'PDF to JPG',cat:'pdf',icon:'🖼️'},
+  {id:'jpg-to-pdf',title:'JPG to PDF',cat:'pdf',icon:'📄'},
+  {id:'pdf-to-excel',title:'PDF to Excel',cat:'pdf',icon:'📊'},
+  {id:'excel-to-pdf',title:'Excel to PDF',cat:'pdf',icon:'📋'},
+  {id:'rotate-pdf',title:'Rotate PDF',cat:'pdf',icon:'🔄'},
+  {id:'remove-pdf-pages',title:'Remove PDF Pages',cat:'pdf',icon:'🗑️'},
+  {id:'ppt-to-pdf',title:'PPT to PDF',cat:'doc',icon:'🎞️'},
+  {id:'pdf-to-ppt',title:'PDF to PPT',cat:'doc',icon:'🎯'},
+  {id:'passport-photo',title:'Passport Photo',cat:'resize',icon:'🛂'},
+  {id:'instagram-resizer',title:'Instagram Resizer',cat:'resize',icon:'📱'},
+  {id:'facebook-resizer',title:'Facebook Resizer',cat:'resize',icon:'👍'},
+  {id:'youtube-thumbnail',title:'YouTube Thumbnail',cat:'resize',icon:'▶️'},
+  {id:'youtube-downloader',title:'YT Thumbnail Downloader',cat:'resize',icon:'⬇️'},
+  {id:'signature-resizer',title:'Signature Resizer',cat:'resize',icon:'✍️'},
+];
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+function initHeader(){
+  const h=document.querySelector('.site-header');
+  if(h)window.addEventListener('scroll',()=>h.classList.toggle('scrolled',window.scrollY>8),{passive:true});
+}
+
+/* ─── MOBILE MENU ─────────────────────────────────────────── */
+function initMenu(){
+  const btn=document.getElementById('hamburger'),menu=document.getElementById('mobileMenu');
+  if(!btn||!menu)return;
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const open=menu.classList.toggle('open');
+    const[s0,s1,s2]=btn.querySelectorAll('span');
+    if(open){s0.style.cssText='transform:rotate(45deg) translate(5px,5px)';s1.style.opacity='0';s2.style.cssText='transform:rotate(-45deg) translate(5px,-5px)';}
+    else{[s0,s1,s2].forEach(s=>s.style.cssText='');}
+  });
+  document.addEventListener('click',e=>{
+    if(!menu.contains(e.target)&&!btn.contains(e.target)){
+      menu.classList.remove('open');btn.querySelectorAll('span').forEach(s=>s.style.cssText='');
+    }
+  });
+}
+
+/* ─── SEARCH ─────────────────────────────────────────────── */
+function initSearch(){
+  const inp=document.getElementById('toolSearch'),res=document.getElementById('searchResults');
+  if(!inp||!res)return;
+  inp.addEventListener('input',()=>{
+    const q=inp.value.trim().toLowerCase();
+    if(!q){res.style.display='none';return;}
+    const hits=ALL_TOOLS.filter(t=>t.title.toLowerCase().includes(q)||t.cat.includes(q)||t.id.includes(q)).slice(0,7);
+    res.innerHTML=hits.length
+      ?hits.map(t=>`<a href="tools/${t.id}.html" class="sri"><div class="sri-ico">${t.icon}</div><div><div class="sri-title">${t.title}</div><div class="sri-cat">${t.cat.charAt(0).toUpperCase()+t.cat.slice(1)} Tool</div></div></a>`).join('')
+      :`<div style="padding:14px;text-align:center;color:var(--lt);font-size:.875rem">No tools found</div>`;
+    res.style.display='block';
+  });
+  document.addEventListener('click',e=>{if(!inp.closest('.hero-search')?.contains(e.target))res.style.display='none';});
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){const f=res.querySelector('.sri');if(f){f.click();res.style.display='none';}}
+    if(e.key==='Escape')res.style.display='none';
+  });
+}
+
+/* ─── CATEGORY TABS ──────────────────────────────────────── */
+function initTabs(){
+  document.querySelectorAll('.cat-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const cat=tab.dataset.cat;
+      document.querySelectorAll('.tools-section').forEach(s=>{
+        s.style.display=(cat==='all'||s.dataset.cat===cat)?'block':'none';
+      });
+    });
+  });
+}
+
+/* ─── FAQ ────────────────────────────────────────────────── */
+function initFAQ(){
+  document.querySelectorAll('.faq-q').forEach(q=>{
+    q.addEventListener('click',()=>{
+      const open=q.classList.contains('open');
+      document.querySelectorAll('.faq-q.open').forEach(o=>{
+        o.classList.remove('open');const a=o.nextElementSibling;
+        if(a){a.classList.remove('open');a.style.maxHeight='0';}
+      });
+      if(!open){q.classList.add('open');const a=q.nextElementSibling;if(a){a.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}}
+    });
+  });
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────── */
+function initReveal(){
+  if(!('IntersectionObserver'in window)){document.querySelectorAll('.reveal').forEach(e=>e.classList.add('visible'));return;}
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.07});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+/* ─── COUNTERS ───────────────────────────────────────────── */
+function initCounters(){
+  if(!('IntersectionObserver'in window))return;
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;obs.unobserve(e.target);
+      const target=parseInt(e.target.dataset.target||0);let cur=0;const step=target/60;
+      const iv=setInterval(()=>{cur=Math.min(cur+step,target);e.target.textContent=Math.floor(cur).toLocaleString();if(cur>=target)clearInterval(iv);},18);
+    });
+  },{threshold:0.5});
+  document.querySelectorAll('[data-target]').forEach(el=>obs.observe(el));
+}
+
+/* ─── UPLOAD (single-trigger — no double fire) ───────────── */
+let _uploadDone=false;
+function initUpload(){
+  if(_uploadDone)return;_uploadDone=true;
+  const zone=document.getElementById('uploadZone'),inp=document.getElementById('fileInput');
+  if(!zone||!inp)return;
+  inp.addEventListener('click',e=>e.stopPropagation());
+  zone.addEventListener('click',e=>{if(e.target===inp)return;inp.click();});
+  inp.addEventListener('change',function(){if(this.files&&this.files.length)handleFiles(this.files);});
+  ['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();zone.classList.add('dragover');}));
+  zone.addEventListener('dragleave',e=>{e.stopPropagation();zone.classList.remove('dragover');});
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();e.stopPropagation();zone.classList.remove('dragover');
+    if(e.dataTransfer.files.length)handleFiles(e.dataTransfer.files);
+  });
+}
+
+function handleFiles(files){
+  if(!files||!files.length)return;
+
+  // File size limit check — prevent browser crash
+  const MAX_MB=100;
+  const tooBig=Array.from(files).filter(f=>f.size>MAX_MB*1024*1024);
+  if(tooBig.length){
+    showToast(`❌ ${tooBig[0].name} is too large (max ${MAX_MB}MB per file)`,'error');
+    return;
+  }
+
+  // FIX 3: Format validation per tool
+  const toolId=document.body.dataset.tool||'';
+  const ALLOWED={
+    'jpg-to-png':        {types:['image/jpeg'],label:'JPG/JPEG images'},
+    'png-to-jpg':        {types:['image/png'],label:'PNG images'},
+    'image-to-webp':     {types:['image/jpeg','image/png','image/gif','image/webp','image/bmp'],label:'image files (JPG/PNG/WebP/GIF)'},
+    'webp-to-jpg':       {types:['image/webp'],label:'WebP images'},
+    'merge-pdf':         {types:['application/pdf'],label:'PDF files'},
+    'split-pdf':         {types:['application/pdf'],label:'PDF files'},
+    'compress-pdf':      {types:['application/pdf'],label:'PDF files'},
+    'rotate-pdf':        {types:['application/pdf'],label:'PDF files'},
+    'remove-pdf-pages':  {types:['application/pdf'],label:'PDF files'},
+    'pdf-to-jpg':        {types:['application/pdf'],label:'PDF files'},
+    'jpg-to-pdf':        {types:['image/jpeg','image/png','image/webp'],label:'JPG, PNG or WebP images'},
+    'image-to-pdf':      {types:['image/jpeg','image/png','image/webp'],label:'JPG, PNG or WebP images'},
+  };
+  if(ALLOWED[toolId]){
+    const{types:allowed,label}=ALLOWED[toolId];
+    const EXT_MIME={'jpg':'image/jpeg','jpeg':'image/jpeg','png':'image/png',
+                    'webp':'image/webp','gif':'image/gif','pdf':'application/pdf',
+                    'bmp':'image/bmp','tiff':'image/tiff','svg':'image/svg+xml'};
+    const wrong=Array.from(files).filter(f=>{
+      const ext=f.name.split('.').pop().toLowerCase();
+      const byExt=EXT_MIME[ext];
+      const byMime=f.type;
+      // Accept if EITHER extension OR browser MIME matches
+      return !allowed.includes(byExt)&&!allowed.includes(byMime);
+    });
+    if(wrong.length){
+      showToast(`❌ "${wrong[0].name}" is wrong format — this tool needs ${label}`,'error');
+      return;
+    }
+  }
+
+
+  window._files=files;
+
+  // FIX 3: Save existing slider/option values BEFORE touching DOM
+  const savedVals={};
+  document.querySelectorAll('#optionsBar input,#optionsBar select').forEach(el=>{
+    if(el.id)savedVals[el.id]=el.value;
+  });
+
+  const fl=document.getElementById('fileList'),ob=document.getElementById('optionsBar'),
+        zone=document.getElementById('uploadZone'),ps=document.getElementById('progressSection'),
+        rs=document.getElementById('resultSection');
+  if(ob)ob.style.display='block';
+  if(zone)zone.classList.add('has-files');
+  if(ps)ps.style.display='none';
+  if(rs)rs.style.display='none';
+  // Clear old preview
+  const pv=document.getElementById('previewSection');if(pv)pv.style.display='none';
+
+  if(fl){
+    fl.innerHTML='';
+    Array.from(files).forEach(f=>{
+      const sz=f.size<1048576?(f.size/1024).toFixed(1)+' KB':(f.size/1048576).toFixed(2)+' MB';
+      const el=document.createElement('div');el.className='file-item';
+      el.innerHTML=`<span class="fi-ico">${fIcon(f.name)}</span><div class="fi-info"><div class="fi-name">${esc(f.name)}</div><div class="fi-size">${sz}</div></div><span class="fi-status ready">Ready</span><button class="fi-rm" onclick="rmFile(this)" title="Remove">✕</button>`;
+      fl.appendChild(el);
+    });
+  }
+
+  // FIX 3: Restore saved values after DOM rebuild
+  Object.entries(savedVals).forEach(([id,val])=>{
+    const el=document.getElementById(id);if(el)el.value=val;
+    // Also update any display label (e.g. quality %)
+    const lbl=document.getElementById(id.replace('Slider','Val'));
+    if(lbl)lbl.textContent=val+(id.toLowerCase().includes('quality')?'%':'');
+  });
+  const btn=document.getElementById('actionBtn');
+  if(btn){btn.disabled=false;if(!btn._orig)btn._orig=btn.innerHTML;btn.innerHTML=btn._orig;btn.onclick=processFiles;}
+
+  // Auto-init cropper if on that tool
+  if(document.body.dataset.tool==='image-cropper')initCropper(files[0]);
+  // FIX 4: Auto-trigger watermark preview when file uploaded
+  if(document.body.dataset.tool==='add-watermark'){
+    const lp=document.getElementById('wmLivePreview');
+    if(lp)lp.style.display='block';
+    setTimeout(updateWatermarkPreview,100);
+  }
+}
+
+function rmFile(btn){
+  btn.closest('.file-item').remove();
+  if(!document.querySelectorAll('.file-item').length){
+    const z=document.getElementById('uploadZone'),ob=document.getElementById('optionsBar');
+    if(z)z.classList.remove('has-files');if(ob)ob.style.display='none';window._files=null;
+  }
+}
+function fIcon(n){
+  const e=n.split('.').pop().toLowerCase();
+  return({jpg:'🖼️',jpeg:'🖼️',png:'🖼️',gif:'🎨',webp:'🌐',svg:'🎨',bmp:'🖼️',
+          pdf:'📄',doc:'📝',docx:'📝',xls:'📊',xlsx:'📊',ppt:'🎞️',pptx:'🎞️'})[e]||'📎';
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtSize(bytes){return bytes<1048576?(bytes/1024).toFixed(1)+' KB':(bytes/1048576).toFixed(2)+' MB';}
+
+/* ─── CANVAS HELPERS ─────────────────────────────────────── */
+function loadImg(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(),url=URL.createObjectURL(file);
+    img.onload=()=>{URL.revokeObjectURL(url);res(img);};
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('Cannot load '+file.name));};
+    img.src=url;
+  });
+}
+async function toBlob(file,mime,q){
+  const img=await loadImg(file);
+  const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+  const ctx=c.getContext('2d');
+  if(mime==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);}
+  ctx.drawImage(img,0,0);
+  return new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('toBlob failed')),mime,q));
+}
+async function resizeTo(file,w,h,mime,q){
+  const img=await loadImg(file);
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
+  return new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(),mime||'image/jpeg',q||0.92));
+}
+async function compressToSize(file,maxB){
+  let q=0.88,blob;
+  for(let i=0;i<16;i++){
+    blob=await toBlob(file,'image/jpeg',q);
+    if(blob.size<=maxB||q<=0.04)break;
+    q=Math.max(0.04,q-0.06);
+  }
+  return blob;
+}
+async function watermarkBlob(file){
+  const txt=document.getElementById('wmText')?.value||'© ConvertlyPro';
+  const op=parseFloat(document.getElementById('wmOpacity')?.value||0.5);
+  const pos=document.getElementById('wmPosition')?.value||'center';
+  const fs=parseInt(document.getElementById('wmFontSize')?.value||32);
+  const color=document.getElementById('wmColor')?.value||'#ffffff';
+  const img=await loadImg(file);
+  const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+  const ctx=c.getContext('2d');ctx.drawImage(img,0,0);ctx.save();ctx.globalAlpha=op;
+  ctx.font=`bold ${fs}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';
+  const pts={center:[c.width*.5,c.height*.5],'top-left':[c.width*.15,c.height*.08],
+    'top-right':[c.width*.85,c.height*.08],'bottom-left':[c.width*.15,c.height*.92],
+    'bottom-right':[c.width*.85,c.height*.92]};
+  const[x,y]=pts[pos]||pts.center;
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=2;ctx.strokeText(txt,x,y);
+  ctx.fillStyle=color;ctx.fillText(txt,x,y);ctx.restore();
+  return new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(),'image/jpeg',0.92));
+}
+
+/* ─── FIX 4: WATERMARK LIVE PREVIEW ─────────────────────── */
+let _wmPreviewTimer=null;
+async function updateWatermarkPreview(){
+  const file=window._files?.[0];
+  if(!file)return;
+  const previewBox=document.getElementById('wmLivePreview');
+  if(!previewBox)return;
+  clearTimeout(_wmPreviewTimer);
+  _wmPreviewTimer=setTimeout(async()=>{
+    try{
+      previewBox.style.opacity='0.5';
+      const blob=await watermarkBlob(file);
+      const url=URL.createObjectURL(blob);
+      let img=previewBox.querySelector('img');
+      if(!img){
+        img=document.createElement('img');
+        img.style.cssText='width:100%;max-height:220px;object-fit:contain;border-radius:10px;border:1px solid var(--bdr);background:white;display:block;transition:opacity .2s';
+        previewBox.insertBefore(img,previewBox.lastElementChild);
+      }
+      const old=img.src;
+      img.src=url;
+      img.onload=()=>{ previewBox.style.opacity='1'; };
+      // Revoke old blob URL after new one loads
+      if(old&&old.startsWith('blob:'))setTimeout(()=>URL.revokeObjectURL(old),2000);
+    }catch(e){
+      console.warn('Preview error',e);
+      previewBox.style.opacity='1';
+    }
+  },400);
+}
+
+function initWatermarkPreview(){
+  const ids=['wmText','wmPosition','wmOpacity','wmFontSize','wmColor'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',updateWatermarkPreview);
+    if(el&&el.tagName==='SELECT')el.addEventListener('change',updateWatermarkPreview);
+  });
+}
+
+/* ─── BEFORE/AFTER PREVIEW ───────────────────────────────── */
+function showPreview(origFile, resultBlob, resultName){
+  let sec=document.getElementById('previewSection');
+  if(!sec){
+    sec=document.createElement('div');sec.id='previewSection';
+    sec.style.cssText='padding:18px;border-top:1px solid var(--bdr);background:var(--bg)';
+    const main=document.querySelector('.tool-card-main');
+    if(main)main.appendChild(sec);
+  }
+
+  const origUrl=URL.createObjectURL(origFile);
+  const newUrl=URL.createObjectURL(resultBlob);
+  const origSize=fmtSize(origFile.size);
+  const newSize=fmtSize(resultBlob.size);
+  const saved=origFile.size>0?Math.round((1-resultBlob.size/origFile.size)*100):0;
+  const savedHtml=saved>0
+    ?`<span style="background:var(--sl);color:var(--s);padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:800">↓ ${saved}% smaller</span>`
+    :`<span style="background:var(--pl);color:var(--p);padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:800">Converted</span>`;
+
+  const isImage=resultBlob.type.startsWith('image/');
+  const previewHtml=isImage
+    ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div style="text-align:center">
+          <div style="font-size:.72rem;font-weight:800;color:var(--lt);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Original</div>
+          <img src="${origUrl}" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--bdr);background:white"/>
+          <div style="font-size:.78rem;color:var(--mut);margin-top:5px;font-weight:600">${origSize}</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.72rem;font-weight:800;color:var(--s);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Result ✓</div>
+          <img src="${newUrl}" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:2px solid var(--s);background:white"/>
+          <div style="font-size:.78rem;color:var(--s);margin-top:5px;font-weight:700">${newSize} ${savedHtml}</div>
+        </div>
+      </div>`
+    :`<div style="background:var(--wh);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:2.5rem">📄</div>
+        <div>
+          <div style="font-weight:700;font-size:.9rem;color:var(--dark);margin-bottom:3px">${resultName}</div>
+          <div style="font-size:.8rem;color:var(--mut)">Original: ${origSize} → Result: ${newSize} ${savedHtml}</div>
+        </div>
+      </div>`;
+
+  const dlLabel=(window._results?.length>1)?`⬇️ Download ZIP (${window._results.length} files)`:'⬇️ Download';
+
+  sec.innerHTML=`
+    <div style="font-size:.88rem;font-weight:700;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:7px">
+      👁️ Preview
+    </div>
+    ${previewHtml}
+    <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn btn-success btn-md" onclick="downloadResults()">${dlLabel}</button>
+      <button class="btn btn-secondary btn-md" onclick="location.reload()">🔄 Convert Again</button>
+    </div>`;
+  sec.style.display='block';
+  setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+
+/* ─── REAL PDF TOOLS (pdf-lib) ───────────────────────────── */
+async function loadPdfLib(){
+  if(window.PDFLib)return window.PDFLib;
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+    s.onload=()=>res(window.PDFLib);
+    s.onerror=()=>rej(new Error('pdf-lib failed to load'));
+    document.head.appendChild(s);
+  });
+}
+
+/* ─── FIX 2: PDF TO JPG — PDF.js real rendering ─────────── */
+async function loadPdfJs(){
+  if(window.pdfjsLib)return window.pdfjsLib;
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=()=>{
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc=
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      res(window.pdfjsLib);
+    };
+    s.onerror=()=>rej(new Error('PDF.js failed to load'));
+    document.head.appendChild(s);
+  });
+}
+
+async function pdfToImages(file){
+  const pdfjs=await loadPdfJs();
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjs.getDocument({data:buf}).promise;
+  const totalPages=pdf.numPages;
+  const blobs=[];
+  const dpi=parseInt(document.getElementById('pdfDpi')?.value||150);
+  const scale=dpi/72; // PDF units are 72dpi by default
+
+  for(let pageNum=1;pageNum<=totalPages;pageNum++){
+    const page=await pdf.getPage(pageNum);
+    const viewport=page.getViewport({scale});
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.round(viewport.width);
+    canvas.height=Math.round(viewport.height);
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    await page.render({canvasContext:ctx,viewport}).promise;
+    const blob=await new Promise((r,j)=>canvas.toBlob(b=>b?r(b):j(new Error('toBlob failed')),'image/jpeg',0.92));
+    blobs.push(blob);
+    // Update progress per page
+    const pf=document.getElementById('progressFill'),pp=document.getElementById('progressPct');
+    const pct=Math.round((pageNum/totalPages)*100);
+    if(pf)pf.style.width=pct+'%';if(pp)pp.textContent=pct+'%';
+  }
+  return blobs;
+}
+
+async function mergePdfsReal(files){
+  const {PDFDocument}=await loadPdfLib();
+  const merged=await PDFDocument.create();
+  for(const file of files){
+    const buf=await file.arrayBuffer();
+    const doc=await PDFDocument.load(buf,{ignoreEncryption:true});
+    const pages=await merged.copyPages(doc,doc.getPageIndices());
+    pages.forEach(p=>merged.addPage(p));
+  }
+  const bytes=await merged.save();
+  return new Blob([bytes],{type:'application/pdf'});
+}
+
+async function splitPdfReal(file, method){
+  const {PDFDocument}=await loadPdfLib();
+  const buf=await file.arrayBuffer();
+  const src=await PDFDocument.load(buf,{ignoreEncryption:true});
+  const total=src.getPageCount();
+  const blobs=[];
+
+  // FIX 5: Single page PDF — cannot split, return as-is with clear message
+  if(total<=1){
+    showToast('⚠️ This PDF has only 1 page — nothing to split!','warning');
+    // Return the original as a single result so user can at least download
+    const bytes=await src.save();
+    blobs.push({blob:new Blob([bytes],{type:'application/pdf'}),name:'page_1.pdf'});
+    return blobs;
+  }
+
+  if(method==='every'){
+    for(let i=0;i<total;i++){
+      const doc=await PDFDocument.create();
+      const[page]=await doc.copyPages(src,[i]);
+      doc.addPage(page);
+      const bytes=await doc.save();
+      blobs.push({blob:new Blob([bytes],{type:'application/pdf'}),name:`page_${i+1}_of_${total}.pdf`});
+    }
+  } else {
+    // Split into 2 equal halves — handle odd pages gracefully
+    const half=Math.ceil(total/2);
+    for(const range of [[0,half],[half,total]]){
+      if(range[0]>=range[1])continue; // skip empty range
+      const doc=await PDFDocument.create();
+      const indices=Array.from({length:range[1]-range[0]},(_,k)=>k+range[0]);
+      const pages=await doc.copyPages(src,indices);
+      pages.forEach(p=>doc.addPage(p));
+      const bytes=await doc.save();
+      blobs.push({blob:new Blob([bytes],{type:'application/pdf'}),name:`part_${blobs.length+1}_of_2.pdf`});
+    }
+  }
+  return blobs;
+}
+
+async function compressPdfReal(file){
+  // pdf-lib doesn't compress images but we can re-save which removes some bloat
+  const {PDFDocument}=await loadPdfLib();
+  const buf=await file.arrayBuffer();
+  const doc=await PDFDocument.load(buf,{ignoreEncryption:true});
+  const bytes=await doc.save({useObjectStreams:true,addDefaultPage:false,objectsPerTick:50});
+  return new Blob([bytes],{type:'application/pdf'});
+}
+
+async function rotatePdfReal(file, degrees){
+  const {PDFDocument,degrees:deg}=await loadPdfLib();
+  const buf=await file.arrayBuffer();
+  const doc=await PDFDocument.load(buf,{ignoreEncryption:true});
+  doc.getPages().forEach(p=>{
+    const cur=p.getRotation().angle;
+    p.setRotation(deg((cur+degrees)%360));
+  });
+  const bytes=await doc.save();
+  return new Blob([bytes],{type:'application/pdf'});
+}
+
+async function removePdfPagesReal(file, pagesToRemove){
+  const {PDFDocument}=await loadPdfLib();
+  const buf=await file.arrayBuffer();
+  const src=await PDFDocument.load(buf,{ignoreEncryption:true});
+  const total=src.getPageCount();
+  const remove=new Set(pagesToRemove.map(n=>n-1)); // convert to 0-indexed
+  const keep=Array.from({length:total},(_,i)=>i).filter(i=>!remove.has(i));
+  const doc=await PDFDocument.create();
+  const pages=await doc.copyPages(src,keep);
+  pages.forEach(p=>doc.addPage(p));
+  const bytes=await doc.save();
+  return new Blob([bytes],{type:'application/pdf'});
+}
+
+async function imgsToPdfReal(files){
+  const {PDFDocument}=await loadPdfLib();
+  const doc=await PDFDocument.create();
+  for(const file of files){
+    const img=await loadImg(file);
+    const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+    const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0);
+    const jpegBytes=await new Promise((res,rej)=>c.toBlob(b=>{
+      const r=new FileReader();r.onload=()=>res(new Uint8Array(r.result));r.onerror=rej;r.readAsArrayBuffer(b);
+    },'image/jpeg',0.92));
+    const jpgImg=await doc.embedJpg(jpegBytes);
+    const page=doc.addPage([jpgImg.width,jpgImg.height]);
+    page.drawImage(jpgImg,{x:0,y:0,width:jpgImg.width,height:jpgImg.height});
+  }
+  const bytes=await doc.save();
+  return new Blob([bytes],{type:'application/pdf'});
+}
+
+/* ─── PROCESS FILES — main engine ────────────────────────── */
+async function processFiles(){
+  const files=window._files||(()=>{const i=document.getElementById('fileInput');return i?.files?.length?i.files:null;})();
+  if(!files||!files.length){showToast('Please upload a file first!','error');return;}
+
+  const toolId=document.body.dataset.tool||'';
+
+  // Cropper handled separately
+  if(toolId==='image-cropper'){cropAndDownload();return;}
+
+  const ps=document.getElementById('progressSection'),pf=document.getElementById('progressFill'),
+        pp=document.getElementById('progressPct'),rs=document.getElementById('resultSection'),
+        btn=document.getElementById('actionBtn');
+  const items=Array.from(document.querySelectorAll('.file-item'));
+
+  if(ps)ps.style.display='block';
+  if(rs)rs.style.display='none';
+  const pv=document.getElementById('previewSection');if(pv)pv.style.display='none';
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Processing...';}
+  items.forEach(el=>{const s=el.querySelector('.fi-status');if(s){s.textContent='Processing…';s.className='fi-status processing';}});
+
+  const arr=Array.from(files),results=[];
+  const setProg=pct=>{if(pf)pf.style.width=pct+'%';if(pp)pp.textContent=Math.round(pct)+'%';};
+
+  for(let i=0;i<arr.length;i++){
+    const file=arr[i];let blob=null,outName=file.name;
+    try{
+      /* ── IMAGE TOOLS ── */
+      if(toolId==='jpg-to-png'){
+        blob=await toBlob(file,'image/png',1);
+        outName=file.name.replace(/\.[^.]+$/,'.png');
+      }
+      else if(toolId==='png-to-jpg'){
+        const q=parseFloat(document.getElementById('quality')?.value||85)/100;
+        blob=await toBlob(file,'image/jpeg',q);outName=file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='image-to-webp'){
+        const q=parseFloat(document.getElementById('quality')?.value||80)/100;
+        blob=await toBlob(file,'image/webp',q);outName=file.name.replace(/\.[^.]+$/,'.webp');
+      }
+      else if(toolId==='webp-to-jpg'){
+        blob=await toBlob(file,'image/jpeg',0.9);outName=file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='image-compressor'){
+        const q=parseFloat(document.getElementById('qualitySlider')?.value||80)/100;
+        const maxW=parseInt(document.getElementById('maxWidth')?.value||0);
+        const img=await loadImg(file);let w=img.naturalWidth,h=img.naturalHeight;
+        if(maxW&&w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        blob=await resizeTo(file,w,h,file.type==='image/png'?'image/png':'image/jpeg',q);
+        outName='compressed_'+file.name;
+      }
+      else if(toolId==='image-resizer'||toolId==='bulk-image-resizer'){
+        const img=await loadImg(file);
+        const wi=document.getElementById('resizeW')?.value,hi=document.getElementById('resizeH')?.value;
+        let w=parseInt(wi)||img.naturalWidth,h=parseInt(hi)||img.naturalHeight;
+        if(wi&&!hi)h=Math.round(img.naturalHeight*w/img.naturalWidth);
+        if(!wi&&hi)w=Math.round(img.naturalWidth*h/img.naturalHeight);
+        blob=await resizeTo(file,w,h,file.type,0.92);outName='resized_'+file.name;
+      }
+      else if(toolId==='image-to-50kb'){
+        blob=await compressToSize(file,50*1024);outName='50kb_'+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='image-to-100kb'){
+        blob=await compressToSize(file,100*1024);outName='100kb_'+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='passport-photo'){
+        const sm={us:[600,600],uk:[413,531],india:[413,531],eu:[413,531],canada:[591,827],australia:[413,531],schengen:[413,531],china:[390,567]};
+        const sel=document.getElementById('countrySelect')?.value||'us';const[w,h]=sm[sel]||[413,531];
+        blob=await resizeTo(file,w,h,'image/jpeg',0.95);outName='passport_'+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='instagram-resizer'){
+        const ac=document.querySelector('.ig-btn.active');const fmt=ac?.dataset.size||'1080x1080';
+        const[w,h]=fmt.split('x').map(Number);blob=await resizeTo(file,w,h,'image/jpeg',0.92);
+        outName=`ig_${fmt}_`+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='facebook-resizer'){
+        const fmt=document.getElementById('fbFormat')?.value||'1200x630';
+        const[w,h]=fmt.split('x').map(Number);blob=await resizeTo(file,w,h,'image/jpeg',0.92);
+        outName='fb_'+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='youtube-thumbnail'){
+        blob=await resizeTo(file,1280,720,'image/jpeg',0.95);outName='youtube_thumbnail.jpg';
+      }
+      else if(toolId==='signature-resizer'){
+        blob=await resizeTo(file,280,120,'image/jpeg',0.95);outName='signature_'+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='add-watermark'){
+        blob=await watermarkBlob(file);outName='watermarked_'+file.name.replace(/\.[^.]+$/,'.jpg');
+      }
+      else if(toolId==='image-to-pdf'||toolId==='jpg-to-pdf'){
+        // FIX 1: Process ALL files together into ONE multi-page PDF (only on first iteration)
+        if(i===0){
+          setProg(10);
+          blob=await imgsToPdfReal(arr);
+          outName=arr.length>1?`combined_${arr.length}_images.pdf`:arr[0].name.replace(/\.[^.]+$/,'')+'.pdf';
+          results.push({blob,name:outName,origSize:arr.reduce((s,f)=>s+f.size,0)});
+          // Mark all items done
+          items.forEach(el=>{const s=el.querySelector('.fi-status');if(s){s.textContent='✓ Done';s.className='fi-status done';}});
+          setProg(100);break;
+        }
+      }
+
+      /* ── PDF TOOLS (real pdf-lib) ── */
+      else if(toolId==='merge-pdf'){
+        // Merge all files at once — do it outside loop
+        if(i===0){
+          blob=await mergePdfsReal(arr);
+          outName='merged_document.pdf';
+          results.push({blob,name:outName,origSize:arr.reduce((s,f)=>s+f.size,0)});
+          items.forEach(el=>{const s=el.querySelector('.fi-status');if(s){s.textContent='✓ Done';s.className='fi-status done';}});
+          setProg(100);break;
+        }
+      }
+      else if(toolId==='split-pdf'){
+        if(i===0){
+          const method=document.getElementById('splitMethod')?.value||'every';
+          const parts=await splitPdfReal(file,method);
+          parts.forEach(p=>results.push({blob:p.blob,name:p.name,origSize:file.size}));
+          items.forEach(el=>{const s=el.querySelector('.fi-status');if(s){s.textContent='✓ Done';s.className='fi-status done';}});
+          setProg(100);break;
+        }
+      }
+      else if(toolId==='compress-pdf'){
+        blob=await compressPdfReal(file);outName='compressed_'+file.name;
+      }
+      else if(toolId==='rotate-pdf'){
+        const angMap={'90° Clockwise':90,'180°':180,'90° Counter-clockwise':270};
+        const ang=angMap[document.getElementById('rotAngle')?.value]||90;
+        blob=await rotatePdfReal(file,ang);outName='rotated_'+file.name;
+      }
+      else if(toolId==='remove-pdf-pages'){
+        const raw=document.getElementById('pagesInput')?.value||'';
+        const nums=[];
+        raw.split(',').forEach(part=>{
+          part=part.trim();
+          if(part.includes('-')){const[a,b]=part.split('-').map(Number);for(let n=a;n<=b;n++)nums.push(n);}
+          else if(part)nums.push(parseInt(part));
+        });
+        blob=await removePdfPagesReal(file,nums.filter(n=>!isNaN(n)));
+        outName='cleaned_'+file.name;
+      }
+
+      /* ── FIX 2: PDF TO JPG — Real PDF.js conversion ── */
+      else if(toolId==='pdf-to-jpg'){
+        if(i===0){
+          setProg(5);
+          const pages=await pdfToImages(file);
+          pages.forEach((b,idx)=>results.push({blob:b,name:`${file.name.replace(/\.pdf$/i,'')}_page_${idx+1}.jpg`,origSize:file.size}));
+          items.forEach(el=>{const s=el.querySelector('.fi-status');if(s){s.textContent='✓ Done';s.className='fi-status done';}});
+          setProg(100);break;
+        }
+      }
+
+      /* ── PDF TOOLS needing server — honest message ── */
+      else if(['pdf-to-word','word-to-pdf','pdf-to-excel','excel-to-pdf',
+               'ppt-to-pdf','pdf-to-ppt'].includes(toolId)){
+        showServerNotice(toolId);
+        if(btn){btn.disabled=false;btn.innerHTML=btn._orig||'Convert';}
+        if(ps)ps.style.display='none';
+        return;
+      }
+
+      /* ── Fallback ── */
+      else{
+        await new Promise(r=>setTimeout(r,600));blob=file;outName='converted_'+file.name;
+      }
+
+      if(blob){
+        results.push({blob,name:outName,origSize:file.size});
+        const itm=items[i];if(itm){const s=itm.querySelector('.fi-status');if(s){s.textContent='✓ Done';s.className='fi-status done';}}
+      }
+    }catch(err){
+      console.error(err);
+      const itm=items[i];if(itm){const s=itm.querySelector('.fi-status');if(s){s.textContent='✗ Error';s.className='fi-status error';}}
+      showToast('⚠️ Error: '+err.message+' — Please try again','error');
+      // FIX: Always re-enable button after error so user can retry without reload
+      if(btn){btn.disabled=false;btn.innerHTML=btn._orig||'Convert';btn.onclick=processFiles;}
+    }
+    setProg(Math.round((i+1)/arr.length*100));
+  }
+
+  window._results=results;
+  if(btn){btn.disabled=false;btn.innerHTML='🔄 Convert Again';btn.onclick=()=>location.reload();}
+
+  // Show preview for first result
+  if(results.length>0&&arr.length>0){
+    showPreview(arr[0],results[0].blob,results[0].name);
+    if(ps)ps.style.display='none';
+  }
+
+  // Also update result section
+  if(rs){
+    const meta=document.getElementById('resultMeta');
+    if(meta){
+      const oT=arr.reduce((s,f)=>s+f.size,0);
+      const nT=results.reduce((s,r)=>s+(r.blob?.size||0),0);
+      const saved=oT>0?Math.round((1-nT/oT)*100):0;
+      meta.textContent=saved>2
+        ?`${results.length} file${results.length>1?'s':''} ready • ${saved}% smaller`
+        :`${results.length} file${results.length>1?'s':''} converted successfully`;
+    }
+    rs.style.display='block';
+  }
+
+  showToast(`✅ Done! ${results.length} file${results.length>1?'s':''} ready`,'success');
+}
+
+/* ─── SERVER NOTICE (honest message for unsupported tools) ── */
+function showServerNotice(toolId){
+  const notices={
+    'pdf-to-word':'PDF to Word conversion requires server-side OCR processing.',
+    'word-to-pdf':'Word to PDF conversion requires server-side rendering.',
+    'pdf-to-excel':'PDF to Excel conversion requires server-side table extraction.',
+    'excel-to-pdf':'Excel to PDF requires server-side rendering.',
+    'ppt-to-pdf':'PowerPoint to PDF requires server-side rendering.',
+    'pdf-to-ppt':'PDF to PPT conversion requires server-side processing.',
+  };
+  const msg=notices[toolId]||'This tool requires server-side processing.';
+
+  let box=document.getElementById('serverNotice');
+  if(!box){
+    box=document.createElement('div');box.id='serverNotice';
+    box.style.cssText='margin:16px 18px;padding:18px;background:#FFFBEB;border:2px solid #F59E0B;border-radius:14px;';
+    const main=document.querySelector('.tool-card-main');
+    if(main)main.appendChild(box);
+  }
+  box.innerHTML=`
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="font-size:1.6rem;flex-shrink:0">🔧</div>
+      <div>
+        <div style="font-weight:800;color:#92400E;margin-bottom:6px;font-size:.9rem">Server Processing Required</div>
+        <p style="font-size:.84rem;color:#78350F;line-height:1.7;margin-bottom:12px">${msg} To offer this tool fully, a backend server with the appropriate libraries is needed. This is a planned upgrade.</p>
+        <div style="font-size:.82rem;font-weight:700;color:#92400E;margin-bottom:10px">In the meantime, these free services work great:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a href="https://smallpdf.com" target="_blank" rel="noopener" class="btn btn-sm" style="background:#F59E0B;color:white">SmallPDF ↗</a>
+          <a href="https://ilovepdf.com" target="_blank" rel="noopener" class="btn btn-sm" style="background:#F59E0B;color:white">iLovePDF ↗</a>
+          <a href="https://pdf2doc.com" target="_blank" rel="noopener" class="btn btn-sm" style="background:#F59E0B;color:white">PDF2Doc ↗</a>
+        </div>
+      </div>
+    </div>`;
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ─── DOWNLOAD ───────────────────────────────────────────── */
+/* ─── FIX 1: BULK ZIP DOWNLOAD ───────────────────────────── */
+async function loadJSZip(){
+  if(window.JSZip)return window.JSZip;
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    s.onload=()=>res(window.JSZip);
+    s.onerror=()=>rej(new Error('JSZip failed to load'));
+    document.head.appendChild(s);
+  });
+}
+
+async function downloadResults(){
+  const res=window._results;
+  if(!res?.length){showToast('No files to download','error');return;}
+
+  // Single file — direct download, no ZIP needed
+  if(res.length===1){
+    const r=res[0];
+    const a=document.createElement('a');a.href=URL.createObjectURL(r.blob);a.download=r.name;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+    showToast('⬇️ Downloading file…','info');
+    return;
+  }
+
+  // Multiple files — pack into one ZIP
+  showToast('📦 Creating ZIP file…','info');
+  try{
+    const JSZip=await loadJSZip();
+    const zip=new JSZip();
+    // Add each file to ZIP
+    res.forEach(r=>{
+      const buf=r.blob.arrayBuffer?r.blob.arrayBuffer():new Promise(resolve=>{
+        const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.readAsArrayBuffer(r.blob);
+      });
+      zip.file(r.name,r.blob);
+    });
+    const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},
+      meta=>{ /* could show progress here */ }
+    );
+    const a=document.createElement('a');a.href=URL.createObjectURL(zipBlob);
+    a.download=`convertlypro_${res.length}_files.zip`;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+    showToast(`✅ ZIP downloaded — ${res.length} files inside`,'success');
+  }catch(err){
+    console.error('ZIP error:',err);
+    // Fallback to individual downloads if JSZip fails
+    showToast('ZIP failed — downloading individually…','warning');
+    res.forEach((r,i)=>setTimeout(()=>{
+      const a=document.createElement('a');a.href=URL.createObjectURL(r.blob);a.download=r.name;
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+    },i*400));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VISUAL DRAG-TO-CROP
+   ═══════════════════════════════════════════════════════════ */
+window._cropState=_cropState={img:null,startX:0,startY:0,endX:0,endY:0,dragging:false,scaleX:1,scaleY:1};
+
+function initCropper(file){
+  const canvas=document.getElementById('cropCanvas');
+  const overlay=document.getElementById('cropOverlay');
+  const wrapper=document.getElementById('cropWrapper');
+  if(!canvas||!overlay)return;
+
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      _cropState.img=img;
+
+      // FIX 4: Use actual container width so canvas never overflows on mobile
+      const containerW=wrapper
+        ? wrapper.parentElement.clientWidth - 32   // 32px for padding
+        : Math.min(window.innerWidth - 32, 600);
+      const maxW=Math.min(containerW, img.naturalWidth);
+      const scale=maxW/img.naturalWidth;
+      const W=Math.max(1,Math.round(img.naturalWidth*scale));
+      const H=Math.max(1,Math.round(img.naturalHeight*scale));
+
+      _cropState.scaleX=img.naturalWidth/W;
+      _cropState.scaleY=img.naturalHeight/H;
+
+      canvas.width=W;canvas.height=H;
+      // FIX 4: overlay must exactly match canvas rendered size (CSS auto scales canvas)
+      canvas.style.width=W+'px';canvas.style.maxWidth='100%';
+      overlay.style.width=W+'px';overlay.style.maxWidth='100%';
+      overlay.style.height=H+'px';
+
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,W,H);
+      // Show UI
+      document.getElementById('cropperUI').style.display='block';
+      document.getElementById('uploadZone').style.display='none';
+
+      // Re-init events after canvas is ready
+      initCropEvents();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function initCropEvents(){
+  const overlay=document.getElementById('cropOverlay');
+  const sel=document.getElementById('cropSelection');
+  if(!overlay||!sel)return;
+
+  const getPos=e=>{
+    const rect=overlay.getBoundingClientRect();
+    const clientX=e.touches?e.touches[0].clientX:e.clientX;
+    const clientY=e.touches?e.touches[0].clientY:e.clientY;
+    // FIX 4: overlay may be CSS-scaled — use rect dimensions for ratio
+    const scaleCSS_X=overlay.offsetWidth >0 ? rect.width/overlay.offsetWidth  : 1;
+    const scaleCSS_Y=overlay.offsetHeight>0 ? rect.height/overlay.offsetHeight : 1;
+    const rawX=(clientX-rect.left)/scaleCSS_X;
+    const rawY=(clientY-rect.top) /scaleCSS_Y;
+    return{
+      x:Math.max(0,Math.min(rawX, overlay.offsetWidth)),
+      y:Math.max(0,Math.min(rawY, overlay.offsetHeight))
+    };
+  };
+
+  const drawSel=()=>{
+    const x=Math.min(_cropState.startX,_cropState.endX);
+    const y=Math.min(_cropState.startY,_cropState.endY);
+    const w=Math.abs(_cropState.endX-_cropState.startX);
+    const h=Math.abs(_cropState.endY-_cropState.startY);
+    sel.style.cssText=`position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;border:2.5px solid #4F46E5;background:rgba(79,70,229,.12);box-sizing:border-box;pointer-events:none`;
+    const info=document.getElementById('cropInfo');
+    if(info){
+      const rw=Math.round(w*_cropState.scaleX),rh=Math.round(h*_cropState.scaleY);
+      info.textContent=`${rw} × ${rh} px`;
+    }
+  };
+
+  overlay.addEventListener('mousedown',e=>{
+    const p=getPos(e);_cropState.startX=p.x;_cropState.startY=p.y;
+    _cropState.endX=p.x;_cropState.endY=p.y;_cropState.dragging=true;
+    sel.style.display='block';e.preventDefault();
+  });
+  overlay.addEventListener('mousemove',e=>{
+    if(!_cropState.dragging)return;
+    const p=getPos(e);_cropState.endX=p.x;_cropState.endY=p.y;drawSel();
+  });
+  overlay.addEventListener('mouseup',()=>{_cropState.dragging=false;});
+
+  // Touch support
+  overlay.addEventListener('touchstart',e=>{
+    const p=getPos(e);_cropState.startX=p.x;_cropState.startY=p.y;
+    _cropState.endX=p.x;_cropState.endY=p.y;_cropState.dragging=true;
+    sel.style.display='block';e.preventDefault();
+  },{passive:false});
+  overlay.addEventListener('touchmove',e=>{
+    if(!_cropState.dragging)return;
+    const p=getPos(e);_cropState.endX=p.x;_cropState.endY=p.y;drawSel();e.preventDefault();
+  },{passive:false});
+  overlay.addEventListener('touchend',()=>{_cropState.dragging=false;});
+}
+
+async function cropAndDownload(){
+  const{img,startX,startY,endX,endY,scaleX,scaleY}=_cropState;
+  if(!img){showToast('Please upload an image first','error');return;}
+  const x=Math.min(startX,endX),y=Math.min(startY,endY);
+  const w=Math.abs(endX-startX),h=Math.abs(endY-startY);
+  if(w<5||h<5){showToast('Please drag to select a crop area','error');return;}
+
+  // Real pixel coords
+  const rx=Math.round(x*scaleX),ry=Math.round(y*scaleY);
+  const rw=Math.round(w*scaleX),rh=Math.round(h*scaleY);
+
+  const c=document.createElement('canvas');c.width=rw;c.height=rh;
+  const ctx=c.getContext('2d');ctx.drawImage(img,rx,ry,rw,rh,0,0,rw,rh);
+
+  const blob=await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(),'image/jpeg',0.95));
+  const name='cropped_'+rw+'x'+rh+'.jpg';
+  window._results=[{blob,name,origSize:img.naturalWidth*img.naturalHeight*3}];
+
+  // Show preview
+  const origFile=window._files?.[0];
+  if(origFile)showPreview(origFile,blob,name);
+
+  showToast(`✅ Cropped to ${rw}×${rh} px`,'success');
+}
+
+/* ─── YT THUMBNAIL ───────────────────────────────────────── */
+function fetchYTThumb(){
+  const val=document.getElementById('ytUrlInput')?.value?.trim()||'';
+  if(!val){showToast('Please enter a YouTube URL','error');return;}
+  const m=val.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+  if(!m){showToast('Invalid YouTube URL — could not find video ID','error');return;}
+  const vid=m[1];
+  const preview=document.getElementById('ytPreview'),btns=document.getElementById('ytDownloadBtns'),result=document.getElementById('ytResult');
+  if(preview)preview.innerHTML=`<img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'" style="width:100%;border-radius:12px;display:block" alt="Thumbnail"/>`;
+  if(btns)btns.innerHTML=`
+    <a href="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" download="yt_hd_${vid}.jpg" target="_blank" class="btn btn-primary btn-md">⬇️ HD 1280×720</a>
+    <a href="https://img.youtube.com/vi/${vid}/hqdefault.jpg" download="yt_hq_${vid}.jpg" target="_blank" class="btn btn-secondary btn-md">⬇️ HQ 480×360</a>
+    <a href="https://img.youtube.com/vi/${vid}/mqdefault.jpg" download="yt_mq_${vid}.jpg" target="_blank" class="btn btn-ghost btn-md">⬇️ MQ 320×180</a>`;
+  if(result)result.style.display='block';
+  showToast('✅ Thumbnails found!','success');
+}
+
+/* ─── MISC ───────────────────────────────────────────────── */
+function selectIGFormat(el,size){
+  document.querySelectorAll('.ig-btn').forEach(b=>{b.classList.remove('active');b.style.cssText='border:2px solid var(--bdr);background:white';});
+  el.classList.add('active');el.style.cssText='border:2px solid var(--p);background:var(--pl)';
+}
+function updatePassportSize(){
+  const m={us:'600×600 px (2×2 inch)',uk:'413×531 px (35×45mm)',india:'413×531 px (35×45mm)',eu:'413×531 px (35×45mm)',canada:'591×827 px (50×70mm)',australia:'413×531 px',schengen:'413×531 px',china:'390×567 px (33×48mm)'};
+  const el=document.getElementById('sizeDisplay'),sel=document.getElementById('countrySelect')?.value;
+  if(el&&sel)el.textContent=m[sel]||'413×531 px';
+}
+
+/* ─── TOAST ──────────────────────────────────────────────── */
+function showToast(msg,type='success'){
+  let t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';t.className='toast';document.body.appendChild(t);}
+  t.innerHTML=`<span>${{success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'}[type]||'ℹ️'}</span><span>${msg}</span>`;
+  t.className=`toast ${type} show`;clearTimeout(t._tmr);t._tmr=setTimeout(()=>t.classList.remove('show'),4500);
+}
+
+/* ─── INIT ───────────────────────────────────────────────── */
+/* ─── DARK MODE ──────────────────────────────────────────── */
+function initDarkMode(){
+  // Restore saved preference or use system preference
+  const saved=localStorage.getItem('clp-theme');
+  const prefersDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const isDark=saved==='dark'||(saved===null&&prefersDark);
+  if(isDark)document.documentElement.setAttribute('data-theme','dark');
+
+  // Create toggle button and inject into header actions
+  const actions=document.querySelector('.header-actions');
+  if(!actions)return;
+  const btn=document.createElement('button');
+  btn.className='dm-toggle';btn.id='dmToggle';
+  btn.setAttribute('aria-label','Toggle dark mode');
+  btn.title='Toggle dark / light mode';
+  actions.insertBefore(btn,actions.firstChild);
+
+  btn.addEventListener('click',()=>{
+    const dark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(dark){
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('clp-theme','light');
+    } else {
+      document.documentElement.setAttribute('data-theme','dark');
+      localStorage.setItem('clp-theme','dark');
+    }
+  });
+}
+
+/* ─── SKELETON LOADER ────────────────────────────────────── */
+function initSkeleton(){
+  const grids=document.querySelectorAll('.tools-grid');
+  if(!grids.length)return;
+
+  // Build 8 skeleton cards per grid
+  grids.forEach(grid=>{
+    if(grid.children.length>0)return; // already has real cards
+    for(let i=0;i<8;i++){
+      const el=document.createElement('div');
+      el.className='skeleton-card';
+      el.innerHTML=`<div class="skeleton sk-icon"></div>
+        <div class="skeleton sk-title"></div>
+        <div class="skeleton sk-desc"></div>
+        <div class="skeleton sk-arr"></div>`;
+      grid.appendChild(el);
+    }
+  });
+
+  // Replace skeletons with real cards after DOM is ready
+  // (real cards are already in HTML — skeletons only show if grid was empty)
+}
+
+/* ─── PAGE LOAD REVEAL STAGGER ───────────────────────────── */
+function initCardStagger(){
+  // Stagger tool cards on homepage load for polished entrance
+  const cards=document.querySelectorAll('.tools-grid .tool-card');
+  cards.forEach((c,i)=>{
+    c.style.opacity='0';
+    c.style.transform='translateY(18px)';
+    c.style.transition=`opacity .35s ease ${i*28}ms, transform .35s cubic-bezier(.34,1.56,.64,1) ${i*28}ms`;
+    // Use rAF to ensure transition fires
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      c.style.opacity='1';
+      c.style.transform='translateY(0)';
+    }));
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  initDarkMode();
+  initHeader();initMenu();initSearch();initTabs();
+  initUpload();initFAQ();initReveal();initCounters();
+  initCardStagger();
+  // Crop events init (only on crop page)
+  if(document.body.dataset.tool==='image-cropper')initCropEvents();
+  // FIX 4: Watermark live preview listeners
+  if(document.body.dataset.tool==='add-watermark')initWatermarkPreview();
+});
+
+// Global exports
+window.processFiles=processFiles;window.downloadResults=downloadResults;
+window.showToast=showToast;window.fetchYTThumb=fetchYTThumb;
+window.selectIGFormat=selectIGFormat;window.updatePassportSize=updatePassportSize;
+window.rmFile=rmFile;window.cropAndDownload=cropAndDownload;

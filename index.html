@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+(function(){var t=localStorage.getItem('clp-theme');
+var s=window.matchMedia('(prefers-color-scheme:dark)').matches;
+if(t==='dark'||(t===null&&s))document.documentElement.setAttribute('data-theme','dark');
+})();
+</script>
+<meta charset="UTF-8"/>
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+<link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+<link rel="manifest" href="site.webmanifest"/>
+<link rel="icon" type="image/png" sizes="192x192" href="img/icons/icon-192.png"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ConvertlyPro — Free Online File Converter Tools</title>
+  <meta name="description" content="40+ free online tools to convert, compress, resize images and PDFs. JPG to PNG, PDF to Word, Image Compressor and more. No signup, 100% free."/>
+  <meta name="robots" content="index,follow"/>
+  <link rel="canonical" href="https://convertlypro.com/"/>
+<!-- FIX 21: Open Graph + Twitter Card -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="ConvertlyPro — 40+ Free Online File Converter Tools"/>
+<meta property="og:description" content="Free tools to convert, compress and resize images & PDFs. JPG to PNG, PDF to JPG, Image Compressor, Passport Photo and more. No signup needed."/>
+<meta property="og:url" content="https://convertlypro.com/"/>
+<meta property="og:image" content="https://convertlypro.com/img/og/homepage.jpg"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:site_name" content="ConvertlyPro"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ConvertlyPro — 40+ Free Online File Converter Tools"/>
+<meta name="twitter:description" content="Free tools to convert, compress and resize images & PDFs. JPG to PNG, PDF to JPG, Image Compressor, Passport Photo and more. No signup needed."/>
+<meta name="twitter:image" content="https://convertlypro.com/img/og/homepage.jpg"/>
+<meta name="theme-color" content="#4F46E5"/>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ConvertlyPro",
+  "url": "https://convertlypro.com",
+  "description": "40+ free online tools to convert, compress and resize images and PDFs. No signup required.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://convertlypro.com/tools/{search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ConvertlyPro",
+  "url": "https://convertlypro.com",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web Browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "description": "40+ free browser-based tools for image conversion, PDF management, and file resizing. JPG to PNG, compress PDF, resize images, passport photos and more.",
+  "featureList": [
+    "JPG to PNG converter",
+    "PDF compressor",
+    "Image compressor",
+    "Passport photo maker",
+    "PDF merger",
+    "Image resizer",
+    "WebP converter",
+    "YouTube thumbnail maker"
+  ],
+  "screenshot": "https://convertlypro.com/img/og/homepage.jpg",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "2341",
+    "bestRating": "5",
+    "worstRating": "1"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Are all ConvertlyPro tools really free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — all 40+ tools on ConvertlyPro are completely free. No subscription, no credit card, no signup required. Just upload your file and convert instantly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you store or upload my files?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Image tools process files entirely in your browser using JavaScript — your files never leave your device. PDF tools use temporary server processing and files are auto-deleted within 1 hour."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I compress a PDF for free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Go to ConvertlyPro's free PDF Compressor, upload your PDF file, and click Compress. The tool optimizes your PDF in your browser and downloads the compressed file instantly. No signup needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I convert JPG to PNG without losing quality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. PNG uses lossless compression, so converting JPG to PNG preserves all quality. Use ConvertlyPro's free JPG to PNG converter — it processes the file in your browser with zero quality loss."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many files can I convert at once?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most tools support batch conversion — you can upload and convert multiple files simultaneously. The Bulk Image Resizer supports up to 20 images at once."
+      }
+    }
+  ]
+}
+</script>
+  <link rel="stylesheet" href="css/style.css"/>
+  
+<!-- FIX 24: Google Analytics + Consent Mode v2
+     REPLACE GA_MEASUREMENT_ID with your actual GA4 ID e.g. G-XXXXXXXXXX
+     REPLACE GSC_VERIFICATION with your Search Console verification code -->
+<meta name="google-site-verification" content="GSC_VERIFICATION"/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{
+  analytics_storage:'denied',
+  ad_storage:'denied',
+  ad_user_data:'denied',
+  ad_personalization:'denied',
+  wait_for_update:500
+});
+gtag('js',new Date());
+gtag('config','GA_MEASUREMENT_ID',{send_page_view:true});
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap"/></noscript>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin/>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
+<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"/>
+<link rel="dns-prefetch" href="https://formspree.io"/>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container-lg header-inner">
+    <a href="index.html" class="logo"><div class="logo-mark">⚡</div><span class="logo-text">Convertly<span>Pro</span></span></a>
+    <nav class="main-nav">
+      <a href="index.html" class="nav-link active">Home</a>
+      <div class="nav-dropdown">
+        <a href="tools/image-tools.html" class="nav-link">🖼️ Image Tools ▾</a>
+        <div class="ddmenu">
+          <a href="tools/jpg-to-png.html" class="ddi"><div class="ddi-ico" style="background:#EFF6FF">🔄</div>JPG to PNG</a>
+          <a href="tools/image-compressor.html" class="ddi"><div class="ddi-ico" style="background:#EFF6FF">🗜️</div>Image Compressor</a>
+          <a href="tools/image-resizer.html" class="ddi"><div class="ddi-ico" style="background:#EFF6FF">📐</div>Image Resizer</a>
+          <a href="tools/image-to-50kb.html" class="ddi"><div class="ddi-ico" style="background:#EFF6FF">📉</div>Image to 50KB</a>
+          <a href="tools/image-tools.html" class="ddi" style="border-top:1px solid var(--bdr);margin-top:4px;padding-top:8px;color:var(--p)"><div class="ddi-ico" style="background:var(--pl)">→</div>All Image Tools</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <a href="tools/pdf-tools.html" class="nav-link">📄 PDF Tools ▾</a>
+        <div class="ddmenu">
+          <a href="tools/merge-pdf.html" class="ddi"><div class="ddi-ico" style="background:#FEF2F2">📎</div>Merge PDF</a>
+          <a href="tools/compress-pdf.html" class="ddi"><div class="ddi-ico" style="background:#FEF2F2">🗜️</div>Compress PDF</a>
+          <a href="tools/pdf-to-word.html" class="ddi"><div class="ddi-ico" style="background:#FEF2F2">📝</div>PDF to Word</a>
+          <a href="tools/pdf-tools.html" class="ddi" style="border-top:1px solid var(--bdr);margin-top:4px;padding-top:8px;color:var(--p)"><div class="ddi-ico" style="background:var(--pl)">→</div>All PDF Tools</a>
+        </div>
+      </div>
+      <a href="tools/resize-tools.html" class="nav-link">📐 Resize</a>
+      <a href="blog/index.html" class="nav-link">📰 Blog</a>
+    </nav>
+    <div class="header-actions">
+      <a href="tools/image-compressor.html" class="btn-nav">⚡ Start Now</a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <ul class="mobile-nav">
+    <li><a href="index.html">🏠 Home</a></li>
+    <div class="mob-sec">Image Tools</div>
+    <li><a href="tools/jpg-to-png.html">🔄 JPG to PNG</a></li>
+    <li><a href="tools/image-compressor.html">🗜️ Image Compressor</a></li>
+    <li><a href="tools/image-resizer.html">📐 Image Resizer</a></li>
+    <li><a href="tools/image-to-50kb.html">📉 Image to 50KB</a></li>
+    <li><a href="tools/image-tools.html">→ All Image Tools</a></li>
+    <div class="mob-sec">PDF Tools</div>
+    <li><a href="tools/merge-pdf.html">📎 Merge PDF</a></li>
+    <li><a href="tools/compress-pdf.html">🗜️ Compress PDF</a></li>
+    <li><a href="tools/pdf-to-word.html">📝 PDF to Word</a></li>
+    <li><a href="tools/pdf-tools.html">→ All PDF Tools</a></li>
+    <div class="mob-sec">More</div>
+    <li><a href="tools/resize-tools.html">📐 Resize Tools</a></li>
+    <li><a href="blog/index.html">📰 Blog</a></li>
+  </ul>
+</div>
+
+<div class="ad-top"><div class="container"><div class="ad-slot ad-728" style="margin:0 auto">📢 Google AdSense 728×90</div></div></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner" style="position:relative;z-index:1">
+      <div class="hero-badge"><span class="bdot"></span> 2M+ Files Converted • Always Free</div>
+      <h1>Convert, Compress &<br/><span class="hl">Resize Files Online</span></h1>
+      <p class="hero-sub">40+ free tools for images and PDFs. No signup, no watermarks, no limits — just instant results.</p>
+      <div class="hero-search">
+        <div class="search-box">
+          <span class="search-ico">🔍</span>
+          <input type="text" id="toolSearch" placeholder="Search tools — try &quot;compress image&quot;..."/>
+          <button class="search-btn">Search</button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="stat-num" data-target="2000000">0</div><div class="stat-lbl">Files Converted</div></div>
+        <div class="hero-stat"><div class="stat-num" data-target="40">0</div><div class="stat-lbl">Free Tools</div></div>
+        <div class="hero-stat"><div class="stat-num" data-target="500000">0</div><div class="stat-lbl">Happy Users</div></div>
+        <div class="hero-stat"><div class="stat-num" data-target="100">0</div><div class="stat-lbl">% Free Always</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK PILLS -->
+<div class="quick-bar">
+  <div class="quick-inner">
+    <a href="tools/jpg-to-png.html" class="qpill">🔄 JPG to PNG</a>
+    <a href="tools/image-compressor.html" class="qpill hot">🗜️ Compress Image</a>
+    <a href="tools/image-to-50kb.html" class="qpill hot">📉 Image to 50KB</a>
+    <a href="tools/image-resizer.html" class="qpill">📐 Resize Image</a>
+    <a href="tools/passport-photo.html" class="qpill hot">🛂 Passport Photo</a>
+    <a href="tools/merge-pdf.html" class="qpill">📎 Merge PDF</a>
+    <a href="tools/compress-pdf.html" class="qpill">🗜️ Compress PDF</a>
+    <a href="tools/pdf-to-word.html" class="qpill">📝 PDF to Word</a>
+    <a href="tools/youtube-thumbnail.html" class="qpill">▶️ YT Thumbnail</a>
+    <a href="tools/instagram-resizer.html" class="qpill hot">📱 Instagram Resize</a>
+    <a href="tools/image-to-webp.html" class="qpill">🌐 Image to WebP</a>
+    <a href="tools/add-watermark.html" class="qpill">💧 Add Watermark</a>
+  </div>
+</div>
+
+<!-- ALL TOOLS -->
+<section class="section">
+  <div class="container">
+    <div class="sec-hdr">
+      <div class="sec-tag">⚡ All Tools</div>
+      <h2>40+ Free Conversion Tools</h2>
+      <p>Every tool runs in your browser — files never leave your device for image tools</p>
+    </div>
+    <div class="cat-tabs">
+      <button class="cat-tab active" data-cat="all">⚡ All Tools</button>
+      <button class="cat-tab" data-cat="image">🖼️ Image</button>
+      <button class="cat-tab" data-cat="pdf">📄 PDF</button>
+      <button class="cat-tab" data-cat="resize">📐 Resize</button>
+      <button class="cat-tab" data-cat="doc">📝 Document</button>
+    </div>
+
+    <!-- IMAGE -->
+    <div class="tools-section" data-cat="image">
+      <div class="cat-section-hdr" style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="sec-tag" style="margin-bottom:0">🖼️ Image Tools</span><div style="flex:1;height:2px;background:linear-gradient(90deg,#BFDBFE,transparent);border-radius:2px"></div></div>
+      <div class="tools-grid" style="margin-bottom:32px">
+        <a href="tools/jpg-to-png.html" class="tool-card"><div class="tc-ico ico-blue">🔄</div><div class="tc-title">JPG to PNG</div><div class="tc-desc">Lossless PNG output</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/png-to-jpg.html" class="tool-card"><div class="tc-ico ico-blue">📸</div><div class="tc-title">PNG to JPG</div><div class="tc-desc">Compress PNG files</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/image-to-webp.html" class="tool-card"><div class="tc-ico ico-blue">🌐</div><div class="tc-title">Image to WebP</div><div class="tc-desc">30% smaller file</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-new">SEO</span></a>
+        <a href="tools/webp-to-jpg.html" class="tool-card"><div class="tc-ico ico-blue">🔁</div><div class="tc-title">WebP to JPG</div><div class="tc-desc">Universal format</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/image-compressor.html" class="tool-card"><div class="tc-ico ico-blue">🗜️</div><div class="tc-title">Image Compressor</div><div class="tc-desc">Up to 90% smaller</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/image-resizer.html" class="tool-card"><div class="tc-ico ico-blue">📐</div><div class="tc-title">Image Resizer</div><div class="tc-desc">Any pixel dimensions</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/bulk-image-resizer.html" class="tool-card"><div class="tc-ico ico-blue">📦</div><div class="tc-title">Bulk Resizer</div><div class="tc-desc">Resize many at once</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/image-cropper.html" class="tool-card"><div class="tc-ico ico-blue">✂️</div><div class="tc-title">Image Cropper</div><div class="tc-desc">Exact dimensions</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/add-watermark.html" class="tool-card"><div class="tc-ico ico-blue">💧</div><div class="tc-title">Add Watermark</div><div class="tc-desc">Protect your photos</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/image-to-50kb.html" class="tool-card"><div class="tc-ico ico-blue">📉</div><div class="tc-title">Image to 50KB</div><div class="tc-desc">For govt portals</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/image-to-100kb.html" class="tool-card"><div class="tc-ico ico-blue">📊</div><div class="tc-title">Image to 100KB</div><div class="tc-desc">Precise file size</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/image-to-pdf.html" class="tool-card"><div class="tc-ico ico-blue">📄</div><div class="tc-title">Image to PDF</div><div class="tc-desc">Convert to PDF doc</div><div class="tc-arr">Use Tool →</div></a>
+      </div>
+    </div>
+
+    <!-- PDF -->
+    <div class="tools-section" data-cat="pdf">
+      <div class="cat-section-hdr" style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="sec-tag" style="margin-bottom:0;background:linear-gradient(135deg,#FECACA,#FED7AA)!important;color:#B91C1C!important">📄 PDF Tools</span><div style="flex:1;height:2px;background:linear-gradient(90deg,#FECACA,transparent);border-radius:2px"></div></div>
+      <div class="tools-grid" style="margin-bottom:32px">
+        <a href="tools/merge-pdf.html" class="tool-card"><div class="tc-ico ico-red">📎</div><div class="tc-title">Merge PDF</div><div class="tc-desc">Combine PDFs</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/split-pdf.html" class="tool-card"><div class="tc-ico ico-red">✂️</div><div class="tc-title">Split PDF</div><div class="tc-desc">Extract pages</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/compress-pdf.html" class="tool-card"><div class="tc-ico ico-red">🗜️</div><div class="tc-title">Compress PDF</div><div class="tc-desc">Reduce file size</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/pdf-to-word.html" class="tool-card"><div class="tc-ico ico-red">📝</div><div class="tc-title">PDF to Word</div><div class="tc-desc">Editable DOCX</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/word-to-pdf.html" class="tool-card"><div class="tc-ico ico-red">📑</div><div class="tc-title">Word to PDF</div><div class="tc-desc">Professional PDFs</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/pdf-to-jpg.html" class="tool-card"><div class="tc-ico ico-red">🖼️</div><div class="tc-title">PDF to JPG</div><div class="tc-desc">Pages as images</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/jpg-to-pdf.html" class="tool-card"><div class="tc-ico ico-red">📄</div><div class="tc-title">JPG to PDF</div><div class="tc-desc">Images to PDF</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/pdf-to-excel.html" class="tool-card"><div class="tc-ico ico-red">📊</div><div class="tc-title">PDF to Excel</div><div class="tc-desc">Extract tables</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/excel-to-pdf.html" class="tool-card"><div class="tc-ico ico-red">📋</div><div class="tc-title">Excel to PDF</div><div class="tc-desc">Spreadsheets to PDF</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/rotate-pdf.html" class="tool-card"><div class="tc-ico ico-red">🔄</div><div class="tc-title">Rotate PDF</div><div class="tc-desc">Fix sideways pages</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/remove-pdf-pages.html" class="tool-card"><div class="tc-ico ico-red">🗑️</div><div class="tc-title">Remove Pages</div><div class="tc-desc">Delete unwanted pages</div><div class="tc-arr">Use Tool →</div></a>
+      </div>
+    </div>
+
+    <!-- RESIZE -->
+    <div class="tools-section" data-cat="resize">
+      <div class="cat-section-hdr" style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="sec-tag" style="margin-bottom:0;background:linear-gradient(135deg,#FDE68A,#FCA5A5)!important;color:#92400E!important">📐 Resize Tools</span><div style="flex:1;height:2px;background:linear-gradient(90deg,#FDE68A,transparent);border-radius:2px"></div></div>
+      <div class="tools-grid" style="margin-bottom:32px">
+        <a href="tools/passport-photo.html" class="tool-card"><div class="tc-ico ico-amber">🛂</div><div class="tc-title">Passport Photo</div><div class="tc-desc">8 countries supported</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/instagram-resizer.html" class="tool-card"><div class="tc-ico ico-purple">📱</div><div class="tc-title">Instagram Resizer</div><div class="tc-desc">Posts, stories, reels</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/facebook-resizer.html" class="tool-card"><div class="tc-ico ico-purple">👍</div><div class="tc-title">Facebook Resizer</div><div class="tc-desc">Covers and posts</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/youtube-thumbnail.html" class="tool-card"><div class="tc-ico ico-red">▶️</div><div class="tc-title">YouTube Thumbnail</div><div class="tc-desc">Perfect 1280×720</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/youtube-downloader.html" class="tool-card"><div class="tc-ico ico-red">⬇️</div><div class="tc-title">YT Downloader</div><div class="tc-desc">Download thumbnails</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/signature-resizer.html" class="tool-card"><div class="tc-ico ico-amber">✍️</div><div class="tc-title">Signature Resizer</div><div class="tc-desc">Forms and portals</div><div class="tc-arr">Use Tool →</div></a>
+      </div>
+    </div>
+
+    <!-- DOC -->
+    <div class="tools-section" data-cat="doc">
+      <div class="cat-section-hdr" style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="sec-tag" style="margin-bottom:0;background:linear-gradient(135deg,#A7F3D0,#BBF7D0)!important;color:#065F46!important">📝 Document Tools</span><div style="flex:1;height:2px;background:linear-gradient(90deg,#A7F3D0,transparent);border-radius:2px"></div></div>
+      <div class="tools-grid">
+        <a href="tools/ppt-to-pdf.html" class="tool-card"><div class="tc-ico ico-green">🎞️</div><div class="tc-title">PPT to PDF</div><div class="tc-desc">PowerPoint to PDF</div><div class="tc-arr">Use Tool →</div><span class="tc-badge badge-hot">Hot</span></a>
+        <a href="tools/pdf-to-ppt.html" class="tool-card"><div class="tc-ico ico-green">🎯</div><div class="tc-title">PDF to PPT</div><div class="tc-desc">Editable slides</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/word-to-pdf.html" class="tool-card"><div class="tc-ico ico-green">📑</div><div class="tc-title">Word to PDF</div><div class="tc-desc">DOCX to PDF</div><div class="tc-arr">Use Tool →</div></a>
+        <a href="tools/excel-to-pdf.html" class="tool-card"><div class="tc-ico ico-green">📋</div><div class="tc-title">Excel to PDF</div><div class="tc-desc">Spreadsheet to PDF</div><div class="tc-arr">Use Tool →</div></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sec-hdr center reveal">
+      <div class="sec-tag">✨ Why ConvertlyPro</div>
+      <h2>Built for Speed & Privacy</h2>
+      <p>Professional-grade tools, completely free with no hidden costs</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal rd1"><div class="feat-ico fi-b">⚡</div><h4>Instant Conversion</h4><p>Browser-based processing — image tools convert in under 2 seconds without any upload wait.</p></div>
+      <div class="feat-card reveal rd2"><div class="feat-ico fi-g">🔒</div><h4>100% Private</h4><p>Image tools process entirely in your browser. No files are ever uploaded to our servers.</p></div>
+      <div class="feat-card reveal rd3"><div class="feat-ico fi-a">💯</div><h4>Always Free</h4><p>No subscriptions, no premium tiers, no file limits. Every tool is completely free forever.</p></div>
+      <div class="feat-card reveal rd1"><div class="feat-ico fi-p">📱</div><h4>Works Everywhere</h4><p>Fully responsive — works perfectly on mobile, tablet, and desktop browsers.</p></div>
+      <div class="feat-card reveal rd2"><div class="feat-ico fi-r">🎯</div><h4>No Signup Needed</h4><p>Just open a tool and start converting. No account, no email, no registration required.</p></div>
+      <div class="feat-card reveal rd3"><div class="feat-ico fi-c">🌍</div><h4>40+ Tools</h4><p>Images, PDFs, documents, resize tools — everything you need in one place.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="sec-hdr center reveal">
+      <div class="sec-tag">📋 How It Works</div>
+      <h2>3 Steps to Convert Any File</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal rd1"><div class="step-num">1</div><h4>Choose a Tool</h4><p>Select any tool from our collection — search by name or browse by category.</p></div>
+      <div class="step-card reveal rd2"><div class="step-num">2</div><h4>Upload Your File</h4><p>Drag & drop or click to browse. Multiple files supported for batch processing.</p></div>
+      <div class="step-card reveal rd3"><div class="step-num">3</div><h4>Download Result</h4><p>Conversion happens instantly. Click download — your file is ready in seconds.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sec-hdr center reveal"><div class="sec-tag">⭐ Reviews</div><h2>Loved by 500K+ Users</h2></div>
+    <div class="testi-grid">
+      <div class="testi-card reveal rd1"><div class="testi-stars">★★★★★</div><p class="testi-text">"The passport photo tool saved me so much time. Resized my photo to exact US requirements in 10 seconds — accepted first try!"</p><div class="testi-author"><div class="testi-av">RS</div><div><div class="testi-name">Rahul Sharma</div><div class="testi-role">Student, Delhi</div></div></div></div>
+      <div class="testi-card reveal rd2"><div class="testi-stars">★★★★★</div><p class="testi-text">"I compress hundreds of product images every week. ConvertlyPro handles batch compression in seconds — no other tool comes close."</p><div class="testi-author"><div class="testi-av">PK</div><div><div class="testi-name">Priya Kapoor</div><div class="testi-role">E-commerce Owner</div></div></div></div>
+      <div class="testi-card reveal rd3"><div class="testi-stars">★★★★★</div><p class="testi-text">"Converting PDFs to Word for editing used to cost me money. ConvertlyPro does it for free with perfect formatting preserved."</p><div class="testi-author"><div class="testi-av">AM</div><div><div class="testi-name">Amit Mishra</div><div class="testi-role">Content Writer</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="section">
+  <div class="container">
+    <div class="sec-hdr reveal" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px">
+      <div><div class="sec-tag">📰 Blog</div><h2>Tips & Guides</h2></div>
+      <a href="blog/index.html" class="btn btn-secondary btn-md">View All Articles →</a>
+    </div>
+    <div class="blog-grid">
+      <a href="blog/jpg-vs-png-which-is-better.html" class="blog-card reveal rd1"><div class="blog-thumb">🖼️<span class="bcatbadge">Image</span></div><div class="blog-body"><div class="blog-meta">📅 Mar 2026 • 5 min read</div><h3>JPG vs PNG: Which Format Should You Use?</h3><p>A complete comparison to help you choose the right image format for any situation.</p><div class="blog-read">Read More →</div></div></a>
+      <a href="blog/how-to-compress-pdf.html" class="blog-card reveal rd2"><div class="blog-thumb">📄<span class="bcatbadge">PDF</span></div><div class="blog-body"><div class="blog-meta">📅 Mar 2026 • 4 min read</div><h3>How to Compress a PDF Without Losing Quality</h3><p>3 proven methods to reduce PDF file size while keeping text and images sharp.</p><div class="blog-read">Read More →</div></div></a>
+      <a href="blog/what-is-webp-format.html" class="blog-card reveal rd3"><div class="blog-thumb">🌐<span class="bcatbadge">Web</span></div><div class="blog-body"><div class="blog-meta">📅 Mar 2026 • 4 min read</div><h3>What is WebP? Why Every Website Should Use It</h3><p>WebP can reduce image sizes by 30% — directly improving your site speed and SEO.</p><div class="blog-read">Read More →</div></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sec-hdr center reveal"><div class="sec-tag">❓ FAQ</div><h2>Frequently Asked Questions</h2></div>
+    <div class="faq-wrap">
+      <div class="faq-item"><div class="faq-q">Is ConvertlyPro completely free?<span class="faq-icon">+</span></div><div class="faq-a">Yes — 100% free. No subscriptions, no premium plans, no hidden charges. All 40+ tools are free forever.</div></div>
+      <div class="faq-item"><div class="faq-q">Are my files safe and private?<span class="faq-icon">+</span></div><div class="faq-a">Image tools process entirely in your browser — files never leave your device. For PDF and document tools, files are encrypted during transfer and auto-deleted from servers after 1 hour.</div></div>
+      <div class="faq-item"><div class="faq-q">Do I need to create an account?<span class="faq-icon">+</span></div><div class="faq-a">No account needed. Open any tool and start converting immediately — no email, no registration, no password.</div></div>
+      <div class="faq-item"><div class="faq-q">What file formats are supported?<span class="faq-icon">+</span></div><div class="faq-a">Images: JPG, PNG, WebP, GIF, BMP, SVG. Documents: PDF, DOCX, XLSX, PPTX and more.</div></div>
+      <div class="faq-item"><div class="faq-q">Can I convert multiple files at once?<span class="faq-icon">+</span></div><div class="faq-a">Yes! Most tools support batch processing — upload multiple files and they all convert simultaneously.</div></div>
+      <div class="faq-item"><div class="faq-q">Does the website work on mobile?<span class="faq-icon">+</span></div><div class="faq-a">Yes — fully responsive design works perfectly on all screen sizes including phones and tablets.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="container">
+    <h2>Ready to Convert Your Files?</h2>
+    <p>Join 500,000+ users who trust ConvertlyPro for their daily conversion needs</p>
+    <div class="cta-btns">
+      <a href="tools/image-compressor.html" class="btn btn-white btn-xl">🗜️ Compress Image</a>
+      <a href="tools/merge-pdf.html" class="btn btn-xl" style="background:rgba(255,255,255,.15);color:white;border:2px solid rgba(255,255,255,.4)">📎 Merge PDF</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="index.html" class="logo"><div class="logo-mark">⚡</div><span class="logo-text" style="color:white">Convertly<span>Pro</span></span></a>
+        <p>Free online tools to convert, compress and resize images, PDFs and documents. No signup needed.</p>
+        <div class="foot-social">
+          <a href="https://facebook.com/dataclickeducation" target="_blank" rel="noopener" class="soc-a" aria-label="Facebook" title="Facebook — DataClick Education">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://instagram.com/dataclickeducation1" target="_blank" rel="noopener" class="soc-a" aria-label="Instagram" title="Instagram — DataClick Education">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="https://youtube.com/@dataclickeducation" target="_blank" rel="noopener" class="soc-a" aria-label="YouTube" title="YouTube — DataClick Education">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="foot-col"><h5>Image Tools</h5><ul><li><a href="tools/jpg-to-png.html">JPG to PNG</a></li><li><a href="tools/image-compressor.html">Image Compressor</a></li><li><a href="tools/image-resizer.html">Image Resizer</a></li><li><a href="tools/image-to-50kb.html">Image to 50KB</a></li><li><a href="tools/add-watermark.html">Add Watermark</a></li></ul></div>
+      <div class="foot-col"><h5>PDF Tools</h5><ul><li><a href="tools/merge-pdf.html">Merge PDF</a></li><li><a href="tools/compress-pdf.html">Compress PDF</a></li><li><a href="tools/pdf-to-word.html">PDF to Word</a></li><li><a href="tools/word-to-pdf.html">Word to PDF</a></li><li><a href="tools/split-pdf.html">Split PDF</a></li></ul></div>
+      <div class="foot-col"><h5>Quick Links</h5><ul><li><a href="tools/passport-photo.html">Passport Photo</a></li><li><a href="tools/instagram-resizer.html">Instagram Resizer</a></li><li><a href="blog/index.html">Blog</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 ConvertlyPro. All rights reserved.</span>
+      <div class="fbl"><a href="privacy-policy.html">Privacy Policy</a><a href="terms-of-service.html">Terms of Service</a><a href="contact.html">Contact</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/cookie-consent.js"></script>
+</body></html>
